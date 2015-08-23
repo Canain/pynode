@@ -1,19 +1,35 @@
 /// <reference path="references.d.ts" />
 
 import ChildProcess = require('child_process');
+import _ = require('lodash');
+
+interface SendHandler {
+	(error: string, result?: string): void;
+}
+
+interface SendHandlerDictionary {
+	[request: string]: SendHandler;
+}
 
 class PyNode {
 	
 	process: ChildProcess.ChildProcess;
-	done: (error: string, result?: string) => void;
+	done: SendHandlerDictionary;
+	increment: number;
 	
 	constructor() {
-		this.done = null;
+		this.done = {};
+		this.increment = 0;
 	}
 	
-	send(data: string, done: (error: string, result?: string) => void) {
-		this.done = done;
-		this.process.stdin.write(data + '\n');
+	send(data, done: SendHandler) {
+		this.done[this.increment.toString()] = done;
+		var send = {
+			request: this.increment,
+			data: data
+		};
+		this.increment++;
+		this.process.stdin.write(JSON.stringify(send) + '\n');
 	}
 	
 	start() {
@@ -26,21 +42,35 @@ class PyNode {
 		this.process.stdout.on('data', (data) => {
 			var out: string = data.toString();
 			out = out.substring(0, out.length - 1);
-			if (this.done) {
-				this.done(null, out);
-				this.done = null;
-			} else {
-				console.log('[Python] ' + out);
+			var ins = out.split('\n');
+			for (var i = 0; i < ins.length; i++) {
+				var resultString = ins[i];
+				if (_.startsWith(resultString, '{')) {
+					var result = JSON.parse(resultString);
+					var request = result.request.toString();
+					var done = this.done[request];
+					done(null, result.data);
+					delete this.done[request];
+				} else {
+					console.log('[Python] ' + out);
+				}
 			}
 		});
 		this.process.stderr.on('data', (data) => {
 			var out: string = data.toString();
 			out = out.substring(0, out.length - 1);
-			if (this.done) {
-				this.done(out);
-				this.done = null;
-			} else {
-				console.error('[Python] ' + out);
+			var ins = out.split('\n');
+			for (var i = 0; i < ins.length; i++) {
+				var resultString = ins[i];
+				if (_.startsWith(resultString, '{')) {
+					var result = JSON.parse(resultString);
+					var request = result.request.toString();
+					var done = this.done[request];
+					done(result.data);
+					delete this.done[request];
+				} else {
+					console.error('[Python] ' + out);
+				}
 			}
 		});
 		this.process.on('close', function (code) {
