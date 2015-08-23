@@ -1,12 +1,16 @@
 import sys
+import json
 
-print "hello"
+print "Python script started"
 
 line = sys.stdin.readline()
 
-def sample(line):
-	return line + " is what was entered"
+def sample(data):
+	return data + " is what was entered"
 
 while line:
-	print sample(line[:-1])
+	data = json.loads(line[:-1])
+	out = json.loads("{\"request\":" + data.request + "}")
+	out.data = sample(data.data)
+	print json.dumps(out)
 	line = sys.stdin.readline()
