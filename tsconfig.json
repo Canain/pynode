@@ -1,11 +1,10 @@
 {
 	"compilerOptions": {
 		"removeComments": true,
-		"target": "ES5",
-		"module": "commonjs",
-		"outDir": "out/ts/"
+		"target": "ES6",
+		"outDir": "./out/ts/"
 	},
 	"files": [
-		"src/ts/pynode.ts"
+		"src/ts/main.ts"
 	]
 }

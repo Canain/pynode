@@ -1,9 +1,9 @@
 {
   "name": "pynode",
   "version": "1.0.0",
-  "main": "app.js",
   "author": "Shuyang Chen <sc1085@gmail.com>",
   "dependencies": {
+    "babel": "^5.8.23",
     "del": "^1.2.1",
     "gulp": "^3.9.0",
     "gulp-rename": "^1.2.2",
@@ -14,6 +14,6 @@
     "typescript": "^1.5.3"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node out/babel/main.js"
   }
 }

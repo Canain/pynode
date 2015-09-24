@@ -1,7 +1,7 @@
-/// <reference path="references.d.ts" />
+/// <reference path="reference.d.ts" />
 
-import ChildProcess = require('child_process');
-import _ = require('lodash');
+import * as ChildProcess from 'child_process';
+import * as _ from 'lodash';
 
 interface SendHandler {
 	(error: string, result?: string): void;
@@ -11,13 +11,16 @@ interface SendHandlerDictionary {
 	[request: string]: SendHandler;
 }
 
-class PyNode {
+export default class PyNode {
 	
 	process: ChildProcess.ChildProcess;
 	done: SendHandlerDictionary;
 	increment: number;
 	
-	constructor() {
+	python: string;
+	
+	constructor(python: string) {
+		this.python = python;
 		this.done = {};
 		this.increment = 0;
 	}
@@ -35,7 +38,7 @@ class PyNode {
 	start() {
 		console.log('[PyNode] Starting python script');
 		
-		this.process = ChildProcess.spawn('python', ['-u', 'src/python/pynode.py']);
+		this.process = ChildProcess.spawn(this.python, ['-u', 'src/python/pynode.py']);
 		
 		(<any>this.process.stdin).setEncoding('utf-8');
 		
@@ -93,5 +96,3 @@ class PyNode {
 		});
 	}
 }
-
-export = PyNode;
