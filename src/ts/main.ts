@@ -1,10 +1,13 @@
 import PyNode from './pynode';
 
-let sample = new PyNode('python2', 'sample', 'process');
+let sample = new PyNode('python2', 'factorialsum', 'sumFactorial');
 sample.start();
 
 setTimeout(() => {
-	sample.send('test', (error: string, result?: string) => {
+	sample.send({
+		a: 5,
+		b: 4
+	}, (error: string, result?: string) => {
 		if (error) {
 			console.error('[Python Result] ' + error);
 		} else {
@@ -14,7 +17,10 @@ setTimeout(() => {
 }, 1000);
 
 setTimeout(() => {
-	sample.send('test2', (error: string, result?: string) => {
+	sample.send({
+		a: 10,
+		b: 10
+	}, (error: string, result?: string) => {
 		if (error) {
 			console.error('[Python Result] ' + error);
 		} else {
