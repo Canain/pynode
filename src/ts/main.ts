@@ -27,4 +27,4 @@ setTimeout(() => {
 			console.log('[Python Result] ' + result);
 		}
 	});
-}, 2000);
+}, 1000);
