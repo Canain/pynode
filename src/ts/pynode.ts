@@ -24,7 +24,7 @@ export default class PyNode {
 	
 	send(data, done: SendHandler) {
 		this.done[this.increment.toString()] = done;
-		var send = {
+		let send = {
 			request: this.increment,
 			data: data
 		};
@@ -40,15 +40,15 @@ export default class PyNode {
 		(<any>this.process.stdin).setEncoding('utf-8');
 		
 		this.process.stdout.on('data', (data) => {
-			var out: string = data.toString();
+			let out: string = data.toString();
 			out = out.substring(0, out.length - 1);
-			var ins = out.split('\n');
-			for (var i = 0; i < ins.length; i++) {
-				var resultString = ins[i];
+			let ins = out.split('\n');
+			for (let i = 0; i < ins.length; i++) {
+				let resultString = ins[i];
 				if (_.startsWith(resultString, '{')) {
-					var result = JSON.parse(resultString);
-					var request = result.request.toString();
-					var done = this.done[request];
+					let result = JSON.parse(resultString);
+					let request = result.request.toString();
+					let done = this.done[request];
 					done(null, result.data);
 					delete this.done[request];
 				} else {
@@ -57,15 +57,15 @@ export default class PyNode {
 			}
 		});
 		this.process.stderr.on('data', (data) => {
-			var out: string = data.toString();
+			let out: string = data.toString();
 			out = out.substring(0, out.length - 1);
-			var ins = out.split('\n');
-			for (var i = 0; i < ins.length; i++) {
-				var resultString = ins[i];
+			let ins = out.split('\n');
+			for (let i = 0; i < ins.length; i++) {
+				let resultString = ins[i];
 				if (_.startsWith(resultString, '{')) {
-					var result = JSON.parse(resultString);
-					var request = result.request.toString();
-					var done = this.done[request];
+					let result = JSON.parse(resultString);
+					let request = result.request.toString();
+					let done = this.done[request];
 					done(result.data);
 					delete this.done[request];
 				} else {
@@ -75,21 +75,6 @@ export default class PyNode {
 		});
 		this.process.on('close', function (code) {
 			console.log('[PyNode] Python script stopped');
-		});
-		
-		this.send('test', (error: string, result?: string) => {
-			if (error) {
-				console.error('[Python Result] ' + error);
-			} else {
-				console.log('[Python Result] ' + result);
-			}
-			this.send('test2', (error: string, result?: string) => {
-				if (error) {
-					console.error('[Python Result] ' + error);
-				} else {
-					console.log('[Python Result] ' + result);
-				}
-			});
 		});
 	}
 }
