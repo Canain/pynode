@@ -1,12 +1,13 @@
 import sys
 import json
+from importlib import import_module
+
+mod = import_module(sys.argv[1])
+process = getattr(mod, sys.argv[2])
 
 print "Python script started"
 
 line = sys.stdin.readline()
-
-def process(data):
-	return data + " is what was entered"
 
 while line:
 	data = json.loads(line[:-1])

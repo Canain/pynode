@@ -17,10 +17,7 @@ export default class PyNode {
 	done: SendHandlerDictionary;
 	increment: number;
 	
-	python: string;
-	
-	constructor(python: string) {
-		this.python = python;
+	constructor(public python: string, public script: string, public method: string) {
 		this.done = {};
 		this.increment = 0;
 	}
@@ -38,7 +35,7 @@ export default class PyNode {
 	start() {
 		console.log('[PyNode] Starting python script');
 		
-		this.process = ChildProcess.spawn(this.python, ['-u', 'src/python/pynode.py']);
+		this.process = ChildProcess.spawn(this.python, ['-u', 'src/python/pynode.py', this.script, this.method]);
 		
 		(<any>this.process.stdin).setEncoding('utf-8');
 		
